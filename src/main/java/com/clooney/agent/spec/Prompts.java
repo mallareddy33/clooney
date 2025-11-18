@@ -74,6 +74,9 @@ Requirements:
 - Use layered architecture: controller, service, repository, entity (JPA).
 - Implement REST endpoints that match the OpenAPI spec.
 - Use JPA entities that match the provided SQL schema.
+- Include a working persistence setup:
+  - Add H2 in-memory database as a runtime dependency.
+  - Configure Spring Boot to use H2 by default so the app starts without external DB.
 - Use standard Spring Boot annotations (@RestController, @Service, @Entity, etc.).
 - Use constructor injection where possible.
 - Do not include any explanation comments outside of the code.
@@ -85,16 +88,12 @@ Project structure to generate:
 - src/main/java/com/clooney/generated/service/...Service.java
 - src/main/java/com/clooney/generated/repository/...Repository.java
 - src/main/java/com/clooney/generated/entity/...Entity.java
-- src/main/resources/application.yml (basic DB config placeholder)
+- src/main/resources/application.yml (basic H2 config)
 
 Return all files in the following exact format:
 
 ===FILE:backend/generated/java-backend/pom.xml===
 <pom.xml content>
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/Application.java===
-<Java code>
-===FILE:backend/generated/java-backend/src/main/java/.../SomeController.java===
-<Java code>
 ...
 ===END===
 

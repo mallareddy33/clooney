@@ -27,22 +27,22 @@ public class Orchestrator {
         LLMClient llm = new LLMClient(config.getOpenAiApiKey(), config.getModelName());
 
         if (capture) {
-            APIInspector inspector = new APIInspector(logsDir);
+            APIInspector inspector = new APIInspector(config);
             for (String page : pages) {
-                System.out.println("[Clooney] (stub) Would capture API calls for " + page);
+                System.out.println("[Clooney] Capturing API calls for " + page);
                 inspector.capturePageCalls(page);
             }
         }
 
-        System.out.println("[Clooney] (stub) Synthesizing spec...");
+        System.out.println("[Clooney] Synthesizing spec...");
         new SpecSynthesizer(logsDir, specDir, llm).synthesize();
 
-        System.out.println("[Clooney] (stub) Generating Spring Boot backend...");
+        System.out.println("[Clooney] Generating Spring Boot backend...");
         new BackendSynthesizer(specDir, backendDir, llm).synthesizeApp();
 
-        System.out.println("[Clooney] (stub) Generating JUnit tests...");
+        System.out.println("[Clooney] Generating JUnit tests...");
         new TestSynthesizer(specDir, testsDir, llm).synthesizeTests();
 
-        System.out.println("[Clooney] Backend pipeline skeleton completed.");
+        System.out.println("[Clooney] Backend pipeline completed.");
     }
 }

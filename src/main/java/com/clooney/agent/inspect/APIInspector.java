@@ -3,6 +3,7 @@ package com.clooney.agent.inspect;
 import com.clooney.agent.config.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.Cookie;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,7 +17,9 @@ import java.util.*;
  *
  * Responsibilities:
  *  - Launch a headless Chromium browser.
- *  - Authenticate into Asana (email/password or cookie) if possible.
+ *  - Authenticate into Asana:
+ *      * Prefer ASANA_COOKIE if present
+ *      * Otherwise, fall back to email/password login if provided
  *  - Navigate to a target page (home/projects/tasks).
  *  - Capture all HTTP responses whose URLs contain "/api/1.0/".
  *  - For each captured call, store:
@@ -72,20 +75,22 @@ public class APIInspector {
                         captured.add(call);
                     }
                 } catch (Exception e) {
-                    // swallow individual errors to keep capture robust
                     System.err.println("[Clooney] Error capturing response: " + e.getMessage());
                 }
             });
 
-            // Login if we have credentials and no cookie
-            if (shouldLoginWithCredentials()) {
+            // Auth flow logic:
+            //  - If we have ASANA_COOKIE -> assume already authenticated, no login
+            //  - Else if email/password present -> do login flow
+            //  - Else -> warn
+            if (hasCookie()) {
+                System.out.println("[Clooney] Using ASANA_COOKIE for authentication (no login flow).");
+            } else if (shouldLoginWithCredentials()) {
                 System.out.println("[Clooney] Logging into Asana using email/password...");
                 loginToAsana(page, config.getAsanaEmail(), config.getAsanaPassword());
-            } else if (config.getAsanaCookie() != null && !config.getAsanaCookie().isBlank()) {
-                System.out.println("[Clooney] Using ASANA_COOKIE for authentication (no login flow).");
             } else {
-                System.out.println("[Clooney] WARNING: No Asana credentials or cookie provided. " +
-                        "You might be redirected to login instead of dashboard.");
+                System.out.println("[Clooney] WARNING: No Asana cookie or credentials provided. " +
+                        "You might be redirected to login instead of the dashboard.");
             }
 
             System.out.println("[Clooney] Navigating to page: " + url);
@@ -115,20 +120,48 @@ public class APIInspector {
     // Internal helpers
     // ----------------------------------------------------------------------
 
+    private boolean hasCookie() {
+        String cookieHeader = config.getAsanaCookie();
+        return cookieHeader != null && !cookieHeader.isBlank();
+    }
+
     private BrowserContext createContextWithOptionalCookies(Browser browser) {
         BrowserContext context = browser.newContext();
 
-        // Optional cookie-based auth
         String cookieHeader = config.getAsanaCookie();
         if (cookieHeader != null && !cookieHeader.isBlank()) {
-            // Expecting something like: "name=value; name2=value2"
-            List<BrowserContext.AddCookiesParam> cookies = parseCookieHeader(cookieHeader);
+            List<Cookie> cookies = parseCookieHeader(cookieHeader);
             if (!cookies.isEmpty()) {
-                context.addCookies(cookies.toArray(new BrowserContext.AddCookiesParam[0]));
+                System.out.println("[Clooney] Adding " + cookies.size() + " cookies to context.");
+                context.addCookies(cookies);
             }
         }
 
         return context;
+    }
+
+    private List<Cookie> parseCookieHeader(String cookieHeader) {
+        List<Cookie> cookies = new ArrayList<>();
+        // Expecting something like: "name=value; name2=value2"
+        String[] parts = cookieHeader.split(";");
+        for (String part : parts) {
+            String trimmed = part.trim();
+            if (trimmed.isEmpty()) continue;
+
+            String[] kv = trimmed.split("=", 2);
+            if (kv.length != 2) continue;
+            String name = kv[0].trim();
+            String value = kv[1].trim();
+
+            // Your Playwright version has Cookie(String name, String value)
+            Cookie cookie = new Cookie(name, value);
+            // And public fields for domain/path, not setters
+            cookie.domain = "app.asana.com";
+            cookie.path = "/";
+
+            cookies.add(cookie);
+        }
+        return cookies;
     }
 
     private boolean shouldLoginWithCredentials() {
@@ -206,8 +239,7 @@ public class APIInspector {
         try {
             return mapper.readValue(text, Object.class);
         } catch (Exception e) {
-            // If it's not JSON, just store raw text
-            return text;
+            return text; // keep raw
         }
     }
 
@@ -234,28 +266,6 @@ public class APIInspector {
         }
     }
 
-    private List<BrowserContext.AddCookiesParam> parseCookieHeader(String cookieHeader) {
-        List<BrowserContext.AddCookiesParam> cookies = new ArrayList<>();
-        String[] parts = cookieHeader.split(";");
-        for (String part : parts) {
-            String trimmed = part.trim();
-            if (trimmed.isEmpty()) continue;
-
-            String[] kv = trimmed.split("=", 2);
-            if (kv.length != 2) continue;
-            String name = kv[0].trim();
-            String value = kv[1].trim();
-
-            BrowserContext.AddCookiesParam cookie = new BrowserContext.AddCookiesParam();
-            cookie.setName(name);
-            cookie.setValue(value);
-            cookie.setDomain("app.asana.com");
-            cookie.setPath("/");
-            cookies.add(cookie);
-        }
-        return cookies;
-    }
-
     // Simple struct for internal URL parse result
     private record ParsedUrl(String path, Map<String, Object> query) {}
 
@@ -272,7 +282,6 @@ public class APIInspector {
         public int status;
         public Object responseBody;
 
-        public APICall() {
-        }
+        public APICall() {}
     }
 }
