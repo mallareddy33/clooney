@@ -59,7 +59,7 @@ public class LLMClient {
         // BackendSynthesizer prompt
         if (prompt.contains("Generate Spring Boot backend code")) {
             return """
-===FILE:backend/generated/java-backend/pom.xml===
+===FILE:pom.xml===
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -116,7 +116,7 @@ public class LLMClient {
     </build>
 </project>
 
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/Application.java===
+===FILE:src/main/java/com/clooney/generated/Application.java===
 package com.clooney.generated;
 
 import org.springframework.boot.SpringApplication;
@@ -130,7 +130,7 @@ public class Application {
     }
 }
 
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/entity/ProjectEntity.java===
+===FILE:src/main/java/com/clooney/generated/entity/ProjectEntity.java===
 package com.clooney.generated.entity;
 
 import jakarta.persistence.Entity;
@@ -173,7 +173,7 @@ public class ProjectEntity {
     }
 }
 
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/entity/TaskEntity.java===
+===FILE:src/main/java/com/clooney/generated/entity/TaskEntity.java===
 package com.clooney.generated.entity;
 
 import jakarta.persistence.Entity;
@@ -216,7 +216,7 @@ public class TaskEntity {
     }
 }
 
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/repository/ProjectRepository.java===
+===FILE:src/main/java/com/clooney/generated/repository/ProjectRepository.java===
 package com.clooney.generated.repository;
 
 import com.clooney.generated.entity.ProjectEntity;
@@ -225,7 +225,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ProjectRepository extends JpaRepository<ProjectEntity, String> {
 }
 
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/repository/TaskRepository.java===
+===FILE:src/main/java/com/clooney/generated/repository/TaskRepository.java===
 package com.clooney.generated.repository;
 
 import com.clooney.generated.entity.TaskEntity;
@@ -234,7 +234,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TaskRepository extends JpaRepository<TaskEntity, String> {
 }
 
-===FILE:backend/generated/java-backend/src/main/java/com/clooney/generated/controller/AsanaCloneController.java===
+===FILE:src/main/java/com/clooney/generated/controller/AsanaCloneController.java===
 package com.clooney.generated.controller;
 
 import com.clooney.generated.entity.ProjectEntity;
@@ -283,7 +283,7 @@ public class AsanaCloneController {
     }
 }
 
-===FILE:backend/generated/java-backend/src/main/resources/application.yml===
+===FILE:src/main/resources/application.yml===
 spring:
   datasource:
     url: jdbc:h2:mem:asana;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1
@@ -312,41 +312,6 @@ logging:
 """;
         }
 
-        // TestSynthesizer prompt (keep as-is or as before)
-        if (prompt.contains("Generate JUnit tests using RestAssured")) {
-            return """
-                ===FILE:tests/backend/ProjectsApiTests.java===
-                package tests.backend;
-
-                import io.restassured.RestAssured;
-                import io.restassured.http.ContentType;
-                import org.junit.jupiter.api.BeforeAll;
-                import org.junit.jupiter.api.Test;
-
-                import static io.restassured.RestAssured.given;
-                import static org.hamcrest.Matchers.*;
-
-                public class ProjectsApiTests {
-
-                    @BeforeAll
-                    static void setup() {
-                        RestAssured.baseURI = "http://localhost:8080";
-                    }
-
-                    @Test
-                    void listProjects_returns200() {
-                        given()
-                          .accept(ContentType.JSON)
-                        .when()
-                          .get("/projects")
-                        .then()
-                          .statusCode(200)
-                          .body("data", notNullValue());
-                    }
-                }
-                ===END===
-                """;
-        }
 
         // Generic fallback
         return "STUB_RESPONSE_FOR_PROMPT\n" + prompt + "\nEND_STUB";
