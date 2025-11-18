@@ -15,7 +15,7 @@ public class BackendSynthesizer {
 
     public BackendSynthesizer(Path specDir, Path outputDir, LLMClient llm) {
         this.specDir = specDir;
-        this.outputDir = outputDir;
+        this.outputDir = outputDir; // e.g. backend/generated/java-backend
         this.llm = llm;
     }
 
@@ -27,7 +27,6 @@ public class BackendSynthesizer {
             String prompt = Prompts.buildBackendPrompt(openapi, schemaSql);
             String completion = llm.complete(prompt);
 
-            // Parse the LLM output and write all files
             writeFilesFromCompletion(completion);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -54,6 +53,7 @@ public class BackendSynthesizer {
             }
 
             String relativePath = completion.substring(pathStart, pathEnd).trim();
+            // we expect relativePath like "pom.xml" or "src/main/java/..."
 
             int contentStart = completion.indexOf('\n', pathEnd);
             if (contentStart < 0) {
@@ -69,11 +69,7 @@ public class BackendSynthesizer {
 
             String fileContent = completion.substring(contentStart, end).trim();
 
-            // relativePath is already something like backend/generated/java-backend/...
-            Path target = outputDir.getParent() != null
-                    ? outputDir.getParent().resolve(relativePath)
-                    : Path.of(relativePath);
-
+            Path target = outputDir.resolve(relativePath);
             Files.createDirectories(target.getParent());
             Files.writeString(target, fileContent);
 
