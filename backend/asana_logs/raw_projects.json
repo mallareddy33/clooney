@@ -1,0 +1,132 @@
+[
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/projects?workspace=1211973144829633&archived=false&limit=50",
+    "path": "/projects",
+    "query": {
+      "workspace": "1211973144829633",
+      "archived": "false",
+      "limit": "50"
+    },
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "145001",
+          "name": "Website Revamp",
+          "color": "dark-blue",
+          "archived": false
+        },
+        {
+          "gid": "145002",
+          "name": "Personal To-Dos",
+          "color": "green",
+          "archived": false
+        },
+        {
+          "gid": "145003",
+          "name": "Math Channel Launch",
+          "color": "dark-purple",
+          "archived": true
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/projects/145001",
+    "path": "/projects/145001",
+    "query": {},
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": {
+        "gid": "145001",
+        "name": "Website Revamp",
+        "notes": "Revamp personal website and portfolio.",
+        "archived": false,
+        "workspace": {
+          "gid": "1211973144829633",
+          "name": "Personal Projects"
+        },
+        "created_at": "2025-11-01T10:12:30.000Z",
+        "modified_at": "2025-11-18T18:05:10.000Z"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "url": "https://app.asana.com/1/projects",
+    "path": "/projects",
+    "query": {},
+    "requestBody": {
+      "data": {
+        "name": "New Backend Agent",
+        "workspace": "1211973144829633",
+        "notes": "Project to track Clooney agent development."
+      }
+    },
+    "status": 201,
+    "responseBody": {
+      "data": {
+        "gid": "145010",
+        "name": "New Backend Agent",
+        "notes": "Project to track Clooney agent development.",
+        "archived": false,
+        "workspace": {
+          "gid": "1211973144829633",
+          "name": "Personal Projects"
+        }
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "url": "https://app.asana.com/1/projects/145001",
+    "path": "/projects/145001",
+    "query": {},
+    "requestBody": {
+      "data": {
+        "name": "Website Revamp (Phase 2)",
+        "notes": "Focus on blog + math content.",
+        "archived": false
+      }
+    },
+    "status": 200,
+    "responseBody": {
+      "data": {
+        "gid": "145001",
+        "name": "Website Revamp (Phase 2)",
+        "notes": "Focus on blog + math content.",
+        "archived": false
+      }
+    }
+  },
+  {
+    "method": "DELETE",
+    "url": "https://app.asana.com/1/projects/145003",
+    "path": "/projects/145003",
+    "query": {},
+    "requestBody": null,
+    "status": 204,
+    "responseBody": null
+  },
+  {
+    "method": "DELETE",
+    "url": "https://app.asana.com/1/projects/999999",
+    "path": "/projects/999999",
+    "query": {},
+    "requestBody": null,
+    "status": 404,
+    "responseBody": {
+      "errors": [
+        {
+          "message": "Project with gid 999999 not found",
+          "resource": "project",
+          "code": "not_found"
+        }
+      ]
+    }
+  }
+]

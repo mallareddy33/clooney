@@ -1,0 +1,179 @@
+[
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/tasks?project=145001&completed_since=now&limit=50",
+    "path": "/tasks",
+    "query": {
+      "project": "145001",
+      "completed_since": "now",
+      "limit": "50"
+    },
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "20001",
+          "name": "Fix login bug",
+          "completed": false,
+          "assignee": {
+            "gid": "1211973144829621",
+            "name": "Malla Reddy"
+          },
+          "due_on": "2025-11-19"
+        },
+        {
+          "gid": "20003",
+          "name": "Polish landing page copy",
+          "completed": false,
+          "assignee": null,
+          "due_on": null
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/tasks/20001",
+    "path": "/tasks/20001",
+    "query": {},
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": {
+        "gid": "20001",
+        "name": "Fix login bug",
+        "notes": "Reproduce issue on mobile, then patch.",
+        "completed": false,
+        "assignee": {
+          "gid": "1211973144829621",
+          "name": "Malla Reddy"
+        },
+        "projects": [
+          {
+            "gid": "145001",
+            "name": "Website Revamp"
+          }
+        ],
+        "due_on": "2025-11-19",
+        "created_at": "2025-11-10T08:30:00.000Z",
+        "modified_at": "2025-11-18T17:10:00.000Z"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "url": "https://app.asana.com/1/tasks",
+    "path": "/tasks",
+    "query": {},
+    "requestBody": {
+      "data": {
+        "name": "Record math video on generating functions",
+        "projects": ["145002"],
+        "assignee": "me",
+        "due_on": "2025-11-25"
+      }
+    },
+    "status": 201,
+    "responseBody": {
+      "data": {
+        "gid": "20010",
+        "name": "Record math video on generating functions",
+        "completed": false,
+        "projects": [
+          {
+            "gid": "145002",
+            "name": "Personal To-Dos"
+          }
+        ],
+        "assignee": {
+          "gid": "1211973144829621",
+          "name": "Malla Reddy"
+        },
+        "due_on": "2025-11-25"
+      }
+    }
+  },
+  {
+    "method": "PUT",
+    "url": "https://app.asana.com/1/tasks/20001",
+    "path": "/tasks/20001",
+    "query": {},
+    "requestBody": {
+      "data": {
+        "completed": true
+      }
+    },
+    "status": 200,
+    "responseBody": {
+      "data": {
+        "gid": "20001",
+        "name": "Fix login bug",
+        "completed": true
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "url": "https://app.asana.com/1/tasks/20001/subtasks",
+    "path": "/tasks/20001/subtasks",
+    "query": {},
+    "requestBody": {
+      "data": {
+        "name": "Write regression test",
+        "assignee": "me"
+      }
+    },
+    "status": 201,
+    "responseBody": {
+      "data": {
+        "gid": "21001",
+        "name": "Write regression test",
+        "completed": false,
+        "parent": {
+          "gid": "20001"
+        }
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/tasks/20001/stories?limit=20",
+    "path": "/tasks/20001/stories",
+    "query": {
+      "limit": "20"
+    },
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "30001",
+          "type": "comment",
+          "text": "Found root cause on iOS Safari.",
+          "created_by": {
+            "gid": "1211973144829621",
+            "name": "Malla Reddy"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "method": "DELETE",
+    "url": "https://app.asana.com/1/tasks/999999",
+    "path": "/tasks/999999",
+    "query": {},
+    "requestBody": null,
+    "status": 404,
+    "responseBody": {
+      "errors": [
+        {
+          "message": "Task with gid 999999 not found",
+          "resource": "task",
+          "code": "not_found"
+        }
+      ]
+    }
+  }
+]

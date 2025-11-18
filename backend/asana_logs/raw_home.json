@@ -1,0 +1,114 @@
+[
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/users/me",
+    "path": "/users/me",
+    "query": {},
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": {
+        "gid": "1211973144829621",
+        "email": "mallareddy304@gmail.com",
+        "name": "Malla Reddy",
+        "photo": null,
+        "workspaces": [
+          {
+            "gid": "1211973144829633",
+            "name": "Personal Projects"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/workspaces",
+    "path": "/workspaces",
+    "query": {},
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "1211973144829633",
+          "name": "Personal Projects"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/projects?workspace=1211973144829633&archived=false",
+    "path": "/projects",
+    "query": {
+      "workspace": "1211973144829633",
+      "archived": "false"
+    },
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "145001",
+          "name": "Website Revamp",
+          "color": "dark-blue",
+          "archived": false
+        },
+        {
+          "gid": "145002",
+          "name": "Personal To-Dos",
+          "color": "green",
+          "archived": false
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/tasks?workspace=1211973144829633&assignee=me&completed_since=now",
+    "path": "/tasks",
+    "query": {
+      "workspace": "1211973144829633",
+      "assignee": "me",
+      "completed_since": "now"
+    },
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "20001",
+          "name": "Fix login bug",
+          "completed": false,
+          "due_on": "2025-11-19",
+          "projects": [{"gid": "145001"}]
+        },
+        {
+          "gid": "20002",
+          "name": "Record math video",
+          "completed": true,
+          "due_on": null,
+          "projects": [{"gid": "145002"}]
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://app.asana.com/1/projects/145001/tasks",
+    "path": "/projects/145001/tasks",
+    "query": {},
+    "requestBody": null,
+    "status": 200,
+    "responseBody": {
+      "data": [
+        {
+          "gid": "20001",
+          "name": "Fix login bug",
+          "completed": false
+        }
+      ]
+    }
+  }
+]
