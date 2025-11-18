@@ -4,6 +4,8 @@ import com.clooney.agent.backend.BackendSynthesizer;
 import com.clooney.agent.config.Config;
 import com.clooney.agent.inspect.APIInspector;
 import com.clooney.agent.llm.LLMClient;
+import com.clooney.agent.llm.OpenAiLLMClient;
+import com.clooney.agent.llm.StubLLMClient;
 import com.clooney.agent.spec.SpecSynthesizer;
 import com.clooney.agent.tests.TestSynthesizer;
 
@@ -24,7 +26,13 @@ public class Orchestrator {
         Path backendDir = config.getSpringBootOutputDir();
         Path testsDir = config.getTestsOutputDir();
 
-        LLMClient llm = new LLMClient(config.getOpenAiApiKey(), config.getModelName());
+        boolean useStub = Boolean.parseBoolean(
+                System.getenv().getOrDefault("CLOONEY_USE_STUB_LLM", "true")
+        );
+
+        LLMClient llm = useStub
+                ? new StubLLMClient(config.getOpenAiApiKey(), config.getModelName())
+                : new OpenAiLLMClient(config.getOpenAiApiKey(), config.getModelName());
 
         if (capture) {
             APIInspector inspector = new APIInspector(config);
