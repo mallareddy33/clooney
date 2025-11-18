@@ -11,6 +11,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * Real API inspector using Playwright.
+ *
+ * Responsibilities:
+ *  - Launch a headless Chromium browser.
+ *  - Authenticate into Asana (email/password or cookie) if possible.
+ *  - Navigate to a target page (home/projects/tasks).
+ *  - Capture all HTTP responses whose URLs contain "/api/1.0/".
+ *  - For each captured call, store:
+ *      method, url, path (normalized), query params, request body, status, response body.
+ *  - Persist captured calls into backend/asana_logs/raw_<page>.json
+ */
 public class APIInspector {
 
     private final Config config;
@@ -22,6 +34,13 @@ public class APIInspector {
         this.outputDir = config.getLogsDir();
     }
 
+    /**
+     * Capture API calls for a logical Asana page: "home", "projects", "tasks".
+     * Writes output as JSON to backend/asana_logs/raw_<pageName>.json
+     *
+     * @param pageName one of: home, projects, tasks
+     * @return list of captured APICall objects
+     */
     public List<APICall> capturePageCalls(String pageName) {
         String url = switch (pageName) {
             case "home" -> "https://app.asana.com/0/home";
@@ -240,6 +259,10 @@ public class APIInspector {
     // Simple struct for internal URL parse result
     private record ParsedUrl(String path, Map<String, Object> query) {}
 
+    /**
+     * DTO representing a single captured API call.
+     * Jackson-friendly with public fields.
+     */
     public static class APICall {
         public String method;
         public String url;
