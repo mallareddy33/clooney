@@ -66,7 +66,7 @@ public class APIInspector {
             context.onResponse(response -> {
                 try {
                     String respUrl = response.url();
-                    if (!respUrl.contains("/api/1.0/")) {
+                    if (!respUrl.contains("app.asana.com")) {
                         return;
                     }
 
@@ -125,10 +125,19 @@ public class APIInspector {
         return cookieHeader != null && !cookieHeader.isBlank();
     }
 
+    private String stripQuotes(String s) {
+        if (s == null) return null;
+        if ((s.startsWith("\"") && s.endsWith("\"")) ||
+                (s.startsWith("'") && s.endsWith("'"))) {
+            return s.substring(1, s.length() - 1);
+        }
+        return s;
+    }
+
     private BrowserContext createContextWithOptionalCookies(Browser browser) {
         BrowserContext context = browser.newContext();
 
-        String cookieHeader = config.getAsanaCookie();
+        String cookieHeader = stripQuotes(config.getAsanaCookie());
         if (cookieHeader != null && !cookieHeader.isBlank()) {
             List<Cookie> cookies = parseCookieHeader(cookieHeader);
             if (!cookies.isEmpty()) {
