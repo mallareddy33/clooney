@@ -340,6 +340,16 @@ public class ProjectsApiTests {
             .statusCode(200)
             .body("data", notNullValue());
     }
+
+    @Test
+    void deleteNonExistingProject_returns404ish() {
+        given()
+            .accept(ContentType.JSON)
+        .when()
+            .delete("/projects/does-not-exist")
+        .then()
+            .statusCode(anyOf(is(404), is(400), is(204)));
+    }
 }
 
 ===FILE:TasksApiTests.java===

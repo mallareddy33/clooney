@@ -3,6 +3,7 @@ package com.clooney.agent;
 import com.clooney.agent.backend.BackendSynthesizer;
 import com.clooney.agent.config.Config;
 import com.clooney.agent.llm.LLMClient;
+import com.clooney.agent.llm.StubLLMClient;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,8 +55,8 @@ public class BackendSynthesizerTest {
                 Files.writeString(schemaPath, stubSchema);
             }
 
-            System.out.println("[Test] Creating LLMClient...");
-            LLMClient llm = new LLMClient(config.getOpenAiApiKey(), config.getModelName());
+            System.out.println("[Test] Creating LLMClient (StubLLMClient)...");
+            LLMClient llm = new StubLLMClient(config.getOpenAiApiKey(), config.getModelName());
 
             System.out.println("[Test] Running BackendSynthesizer...");
             BackendSynthesizer synthesizer = new BackendSynthesizer(specDir, backendDir, llm);

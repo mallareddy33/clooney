@@ -25,11 +25,52 @@ public class TestSynthesizer {
             String prompt = Prompts.buildTestsPrompt(openapi);
             String completion = llm.complete(prompt);
 
-            Files.createDirectories(outputDir);
-            Path placeholder = outputDir.resolve("README_generated_tests.txt");
-            Files.writeString(placeholder, "Tests would be generated here. LLM output was:\n" + completion);
+            writeFilesFromCompletion(completion);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void writeFilesFromCompletion(String completion) throws IOException {
+        Files.createDirectories(outputDir); // e.g. tests/backend/src/test/java/tests/backend
+
+        final String fileMarker = "===FILE:";
+        final String endMarker = "===END===";
+
+        int idx = 0;
+        while (true) {
+            int start = completion.indexOf(fileMarker, idx);
+            if (start < 0) {
+                break;
+            }
+
+            int pathStart = start + fileMarker.length();
+            int pathEnd = completion.indexOf("===", pathStart);
+            if (pathEnd < 0) {
+                break;
+            }
+
+            String relativePath = completion.substring(pathStart, pathEnd).trim();
+
+            int contentStart = completion.indexOf('\n', pathEnd);
+            if (contentStart < 0) {
+                break;
+            }
+            contentStart += 1; // skip newline
+
+            int nextFile = completion.indexOf(fileMarker, contentStart);
+            int end = nextFile >= 0 ? nextFile : completion.indexOf(endMarker, contentStart);
+            if (end < 0) {
+                end = completion.length();
+            }
+
+            String fileContent = completion.substring(contentStart, end).trim();
+
+            Path target = outputDir.resolve(relativePath);
+            Files.createDirectories(target.getParent());
+            Files.writeString(target, fileContent);
+
+            idx = end;
         }
     }
 }

@@ -111,6 +111,6 @@ public class Config {
     }
 
     public Path getTestsOutputDir() {
-        return projectRoot.resolve("tests/backend");
+        return projectRoot.resolve("tests/backend/src/test/java/tests/backend");
     }
 }
