@@ -1,6 +1,6 @@
 # Clooney – Web App Backend Cloning Agent (Asana-style)
 
-  Clooney is an **agentic backend replication system**.
+Clooney is an **agentic backend replication system**.
 
 Instead of hand-coding an Asana clone, the agent:
 
@@ -297,6 +297,10 @@ Below is a complete “press these buttons in this order” guide. :
   - From a fresh clone:
       ```bash
       git clone <repo>
+  - From a zip:
+      unzip clooney-agent.zip
+      
+      ```bash
       cd clooney
 
       cp .env.template .env
